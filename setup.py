@@ -13,7 +13,7 @@ def package_files(directory):
             paths.append(os.path.join('..', path, filename))
     return paths
 
-extra_files = package_files('static')
+extra_files = package_files('dashboard/templates')
 
 setup(
     name="fastapi-telescope",
@@ -42,6 +42,7 @@ setup(
         "pydantic-settings==2.8.0",
         "fastapi-pagination==0.12.34",
         "aiofiles==23.2.1",
+        "Jinja2==3.1.2",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

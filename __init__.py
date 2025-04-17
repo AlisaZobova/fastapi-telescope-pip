@@ -3,6 +3,7 @@ from starlette import status
 
 from telescope.app.log_http_request import router as requests_router
 from telescope.app.log_db_queries import router as query_router
+from telescope.app.dashboard import router as dashboard_router
 
 
 router = APIRouter(
@@ -20,5 +21,6 @@ router = APIRouter(
 
 router.include_router(requests_router, tags=['Telescope Requests'], prefix='/http-requests')
 router.include_router(query_router, tags=['Telescope DB Queries'], prefix='/db-queries')
+router.include_router(dashboard_router, tags=['Telescope Dashboard'], prefix='/dashboard')
 
 __all__ = ['router']
