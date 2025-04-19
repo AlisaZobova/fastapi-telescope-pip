@@ -71,7 +71,7 @@
       flex: 1;
       padding: 20px;
       background-color: #f4f4f9;
-      text-align: left;
+      text-align: center;
     }
 
     /* Title styling */
@@ -269,7 +269,7 @@
     dayjs.extend(dayjs_plugin_timezone);
 
     // Configure Axios
-    axios.defaults.baseURL = window.appConfig?.apiBaseUrl || 'http://localhost:8000/api/telescope';
+    axios.defaults.baseURL = '{{ api_url }}' || 'http://localhost:8000/api/telescope';
 
     // Setup Vue Router
     const routes = [
@@ -304,7 +304,6 @@
         redirect: '/telescope/dashboard'
       }
     ];
-
 
     const router = VueRouter.createRouter({
       history: VueRouter.createWebHistory(),

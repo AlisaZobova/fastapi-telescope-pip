@@ -9,25 +9,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from pydantic import Field
-from pydantic_settings import BaseSettings
-
-
-class DatabaseConfig(BaseSettings):
-    user: str = Field(description='database user', alias='DB_USER')
-    password: str = Field(description='database password', alias='DB_PASS')
-    host: str = Field(description='database host', alias='DB_HOST')
-    port: int = Field(description='database port', alias='DB_PORT')
-    name: str = Field(description='database name', alias='DB_NAME')
-
-    @property
-    def async_url(self) -> str:
-        return f'postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}'
-
-
-def get_db_config() -> DatabaseConfig:
-    return DatabaseConfig() 
-
+from .config import get_db_config
 
 @lru_cache
 def get_async_engine(

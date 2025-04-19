@@ -5,66 +5,32 @@ This is a FastAPI middleware with UI dashboard for monitoring and debugging your
 ## Setup
 
 1. Install the package using pip.
-2. Create a FastAPI application and include the middleware and UI part like this:
+2. Create a FastAPI application, include the middleware and mount components like this:
 ```python
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from telescope.middleware import TelescopeMiddleware
+from telescope import TELESCOPE_COMPONENTS_DIR
 from fastapi_pagination import add_pagination
-from fastapi import APIRouter, status, Depends
-
-from main.shared.di import get_user_id # can be replaced with your own dependency for getting auth user id
-from telescope import router as telescope_router
-
-router = APIRouter(dependencies=[Depends(get_user_id)])
-router.include_router(telescope_router)
+from main.cmd.router import router
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.add_middleware(TelescopeMiddleware)
+app.add_middleware(TelescopeMiddleware) # add telescope middleware
 
 app.include_router(router)
 
-add_pagination(app)
+add_pagination(app) # add pagination to your app
 
-# Mount static files directory (the built Vue app)
-static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "", "telescope/static")
+app.mount("/components", StaticFiles(directory=TELESCOPE_COMPONENTS_DIR), name="components") # mount Vue components directory
 
-app.mount("/assets", StaticFiles(directory=os.path.join(static_dir, "assets")), name="assets")
-
-
-@app.get("/telescope/dashboard", response_class=FileResponse)
-async def read_index():
-    return FileResponse(os.path.join(static_dir, "index.html"))
-
-
-@app.get("/telescope/dashboard/{catch_all:path}")
-async def catch_all(catch_all: str):
-    file_path = os.path.join(static_dir, catch_all)
-    if os.path.exists(file_path) and not os.path.isdir(file_path):
-        return FileResponse(file_path)
-    return FileResponse(os.path.join(static_dir, "index.html"))
-
-
-
-@app.exception_handler(Exception)
+@app.exception_handler(Exception)  # global exception handler, you can add your own
 def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -76,18 +42,30 @@ if __name__ == '__main__':
         'main.cmd.main:app', host='0.0.0.0', port=8000, reload=True
     )  # use for debugging
 ```
-3. If you want to have auth user id in requests logs, you can add a dependency to your router and add info with id to request so it can be processed by middleware later like this:
+3. Include telescope router and if you want to have auth user id in requests logs, you can add a dependency to your router and add info with id to request so it can be processed by middleware later like this:
 ```python
 from starlette.requests import Request
 
 async def get_user_id(
     request: Request,
 ) -> str:
-    user_id = '111'
+    user_id = '111' # this is just an example, you can get user id from your auth system
     request.state.user_id = user_id # this is important for logs
     return user_id
 ```
-4. Add creds (DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME) to db to your .env file.
+and add it to your router like this:
+```python
+from fastapi import APIRouter, Depends
+
+from main.shared.di import get_user_id
+from telescope import router as telescope_router
+
+router = APIRouter(dependencies=[Depends(get_user_id)])
+router.include_router(telescope_router)
+
+__all__ = ['router']
+```
+4. Add creds (DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME) to db and API_URL to your .env file.
 5. Add migration with such methods to your migrations folder and run it.
 ```python
 def upgrade():
@@ -133,7 +111,5 @@ def downgrade() -> None:
     op.drop_table('log_http_requests')
     # ### end Alembic commands ###
 ```
-6. Copy folder telescope to your project folder.
-7. Update **static/config.js** with your backend url.
 8. Run your FastAPI app.
-9. Open your browser and go to `http://localhost:8000/telescope/dashboard` (or your own backend url) to see the dashboard.
+9. Open your browser and go to `http://localhost:8000/api/telescope/dashboard` (or your own API_URL) to see the dashboard.

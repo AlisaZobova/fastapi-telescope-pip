@@ -6,11 +6,15 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from telescope.config import get_api_config
+
 router = APIRouter()
 
 templates = Jinja2Templates(directory= os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "templates"))
 
+api_url = get_api_config().api_url
+
 # any path processing
-@router.get("/{file_path:path}", response_class=HTMLResponse)
+@router.get("/{path:path}", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    return templates.TemplateResponse("dashboard.html", {"request": request, "api_url": api_url})

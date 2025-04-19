@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter
 from starlette import status
 
@@ -23,4 +25,7 @@ router.include_router(requests_router, tags=['Telescope Requests'], prefix='/htt
 router.include_router(query_router, tags=['Telescope DB Queries'], prefix='/db-queries')
 router.include_router(dashboard_router, tags=['Telescope Dashboard'], prefix='/dashboard')
 
-__all__ = ['router']
+# create constant with full path to components
+TELESCOPE_COMPONENTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "app/dashboard/templates/components")
+
+__all__ = ['router', 'TELESCOPE_COMPONENTS_DIR']
