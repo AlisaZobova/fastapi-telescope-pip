@@ -269,7 +269,7 @@
     dayjs.extend(dayjs_plugin_timezone);
 
     // Configure Axios
-    axios.defaults.baseURL = '{{ api_url }}' || 'http://localhost:8000/api/telescope';
+    axios.defaults.baseURL = '{{ api_url }}' ? '{{ api_url }}' + '/api/telescope' :  'http://localhost:8000/api/telescope';
 
     // Setup Vue Router
     const routes = [
