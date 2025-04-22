@@ -111,5 +111,6 @@ def downgrade() -> None:
     op.drop_table('log_db_queries')
     op.drop_table('log_http_requests')
 ```
-8. Run your FastAPI app.
-9. Open your browser and go to `http://localhost:8000/api/telescope/dashboard` (or use your own API_URL) to see the dashboard.
+8. Run your FastAPI app and open docs page http://localhost:8000/docs.
+9. Open your browser and go to `http://localhost:8000/api/telescope/dashboard` (or use your own API_URL) to see the dashboard. It should look like this:<br><br>
+![Dashboard](https://github.com/AlisaZobova/fastapi-telescope-pip/blob/master/dashboard.png)
