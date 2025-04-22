@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fastapi_telescope"
-version = "0.0.2"
+version = "0.0.5"
 authors = [
   { name="Alisa Zobova", email="zobovaalice@gmail.com" },
 ]

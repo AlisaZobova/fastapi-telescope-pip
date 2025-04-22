@@ -95,24 +95,18 @@ class TelescopeMiddleware(BaseHTTPMiddleware):
         # Initialize request queries storage
         self._request_queries[request_id] = []
 
-        # Start timing the request
         start_time = time.time()
 
-        # Initialize variables for response and exception
         response: Optional[Response] = None
         exception_info = None
 
-        # Get request body
         body = await self._get_request_body(request)
         
         response_body = None
         request.state.user_id = None
 
         try:
-            # Process the request
             response = await call_next(request)
-
-            # Get response body
             response_body = await self._get_response_body(response)
 
         except Exception as e:
@@ -122,10 +116,8 @@ class TelescopeMiddleware(BaseHTTPMiddleware):
             }
             raise e
         finally:
-            # Calculate response time
             response_time = round(time.time() - start_time, 5)
                         
-            # Store the log entry
             await self._store_log_entry(
                 request=request,
                 response=response,
@@ -140,7 +132,7 @@ class TelescopeMiddleware(BaseHTTPMiddleware):
             # Clean up stored queries
             self._request_queries.pop(request_id, None)
             
-            # Clean up 
+            # Clean up context
             request_id_context.reset(token)
 
         return Response(content=response_body, status_code=response.status_code, headers=dict(response.headers))

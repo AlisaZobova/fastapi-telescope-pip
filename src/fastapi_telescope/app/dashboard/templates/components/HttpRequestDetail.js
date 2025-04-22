@@ -54,6 +54,16 @@ export default {
         <h2>Response</h2>
         <pre class="width-100">{{ httpRequest.response_body }}</pre>
       </div>
+      
+      <div class="section" v-if="httpRequest.exception_message">
+        <h2>Exception Message</h2>
+        <pre class="width-100">{{ httpRequest.exception_message }}</pre>
+      </div>
+            
+      <div class="section" v-if="httpRequest.stack_trace">
+        <h2>Stack Trace</h2>
+        <pre class="width-100">{{ httpRequest.stack_trace }}</pre>
+      </div>
 
       <div v-if="dbQueries.length > 0" class="section">
         <h2>DB Queries</h2>
