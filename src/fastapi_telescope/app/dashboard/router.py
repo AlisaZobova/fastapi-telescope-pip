@@ -6,7 +6,7 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from telescope.config import get_api_config
+from fastapi_telescope.config import get_api_config
 
 router = APIRouter()
 

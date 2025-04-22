@@ -1,14 +1,9 @@
-from datetime import datetime
-from typing import List
-
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException
 from sqlalchemy.orm import joinedload
 
-from telescope.models import LogHttpRequest
-from telescope.app.log_http_request.schema import LogHttpRequestBase
-from main.shared.di.database import get_async_session
+from fastapi_telescope.models import LogHttpRequest
+from fastapi_telescope.db import get_async_session
+from .schema import LogHttpRequestBase
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select

@@ -2,10 +2,15 @@
 
 This is a FastAPI middleware with UI dashboard for monitoring and debugging your FastAPI applications. It provides a set of tools to help you visualize and analyze the performance of your API endpoints, including request/response times, error rates, and more.
 
+## Requirements
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+
 ## Setup
 
 1. Install the package using pip.
-2. Create a FastAPI application, include the middleware and mount components like this:
+2. Create main.py file with a FastAPI application, include the middleware and mount components like this:
 ```python
 from dotenv import load_dotenv
 
@@ -15,20 +20,22 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
-from telescope.middleware import TelescopeMiddleware
-from telescope import TELESCOPE_COMPONENTS_DIR
+from fastapi_telescope import TelescopeMiddleware
+from fastapi_telescope import TELESCOPE_COMPONENTS_DIR
 from fastapi_pagination import add_pagination
-from main.cmd.router import router
+from .router import router
 
 app = FastAPI()
 
-app.add_middleware(TelescopeMiddleware) # add telescope middleware
+app.add_middleware(TelescopeMiddleware)  # add telescope middleware
 
 app.include_router(router)
 
-add_pagination(app) # add pagination to your app
+add_pagination(app)  # add pagination to your app
 
-app.mount("/components", StaticFiles(directory=TELESCOPE_COMPONENTS_DIR), name="components") # mount Vue components directory
+app.mount("/components", StaticFiles(directory=TELESCOPE_COMPONENTS_DIR),
+          name="components")  # mount Vue components directory
+
 
 @app.exception_handler(Exception)  # global exception handler, you can add your own
 def global_exception_handler(request: Request, exc: Exception):
@@ -37,14 +44,17 @@ def global_exception_handler(request: Request, exc: Exception):
         content={'message': 'An unexpected error occurred'},
     )
 
+
 if __name__ == '__main__':
     uvicorn.run(
         'main.cmd.main:app', host='0.0.0.0', port=8000, reload=True
     )  # use for debugging
 ```
-3. Include the Telescope router and optionally add the authenticated user ID in requests using custom dependency like this:
+3. Create router.py file and include the Telescope router and optionally add the authenticated user ID in requests using custom dependency like this:
 ```python
 from starlette.requests import Request
+from fastapi import APIRouter, Depends
+from fastapi_telescope import router as telescope_router
 
 async def get_user_id(
     request: Request,
@@ -52,21 +62,14 @@ async def get_user_id(
     user_id = '111' # this is just an example, you can get user id from your auth system
     request.state.user_id = user_id # this user_id will be used in logs
     return user_id
-```
-then add dependency and Telescope router to your app router like this (also you can use dependency with auth only for some routes):
-```python
-from fastapi import APIRouter, Depends
-
-from main.shared.di import get_user_id
-from telescope import router as telescope_router
 
 router = APIRouter(dependencies=[Depends(get_user_id)])
 router.include_router(telescope_router)
 
 __all__ = ['router']
 ```
-4. Add creds (DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME) to db and API_URL (f.e. http://localhost:8000) to your .env file.
-5. Add migration with such methods to your migrations folder and run it.
+4. Add creds (DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME) to POSTGRES db and API_URL (f.e. http://localhost:8000) to your .env file.
+5. Add migration with such methods to your migrations folder and run it (or you can use raw sql query for your db).
 ```python
 def upgrade():
     op.create_table('log_http_requests',

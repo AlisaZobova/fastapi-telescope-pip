@@ -1,5 +1,5 @@
-from .db import get_async_sessionmaker, get_async_engine
-from telescope.models import LogHttpRequest, LogDBQuery
+from fastapi_telescope.db import get_async_sessionmaker, get_async_engine
+from .models import LogHttpRequest, LogDBQuery
 from datetime import datetime, date
 import time
 import json

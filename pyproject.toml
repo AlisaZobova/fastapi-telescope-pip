@@ -1,0 +1,40 @@
+[build-system]
+requires = [
+    "hatchling >= 1.26",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "fastapi_telescope"
+version = "0.0.3"
+authors = [
+  { name="Alisa Zobova", email="zobovaalice@gmail.com" },
+]
+description = "Middleware and tool for FastApi HTTP requests and DB queries debugging"
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["fastapi", "debugging"]
+dependencies = [
+    "fastapi==0.115.8",
+    "uvicorn==0.34.0",
+    "psycopg2-binary==2.9.10",
+    "SQLAlchemy==2.0.38",
+    "pydantic==2.10.6",
+    "loguru==0.7.3",
+    "asyncpg==0.30.0",
+    "pytz==2025.1",
+    "python-dotenv==1.0.1",
+    "pydantic-settings==2.8.0",
+    "fastapi-pagination==0.12.34",
+    "aiofiles==23.2.1",
+    "Jinja2==3.1.2"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/AlisaZobova/fastapi-telescope-pip"

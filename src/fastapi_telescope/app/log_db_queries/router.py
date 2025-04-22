@@ -1,12 +1,10 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from main.shared.di.database import get_async_session
+from fastapi_telescope.db import get_async_session
 
-from telescope.models import LogDBQuery
-from telescope.app.log_db_queries.schema import LogDBQueryBase
+from fastapi_telescope.models import LogDBQuery
+from .schema import LogDBQueryBase
 
 from fastapi_pagination import Page, Params
 from fastapi_pagination.ext.sqlalchemy import paginate
