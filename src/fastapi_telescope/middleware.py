@@ -123,7 +123,7 @@ class TelescopeMiddleware(BaseHTTPMiddleware):
                 response=response,
                 response_time=response_time,
                 request_body=body,
-                response_body=response_body if response_body else "Unexpected error occurred!",
+                response_body=response_body if response_body else "",
                 exception_info=exception_info,
                 request_id=request_id,
                 user_id=request.state.user_id
