@@ -6,6 +6,10 @@ export default {
         <table>
           <tbody>
             <tr>
+              <td>Id:</td>
+              <td>{{ httpRequest.id }}</td>
+            </tr>
+            <tr>
               <td>Time:</td>
               <td>
                 <span :title="formatFullDatetime(httpRequest.created_at)">
@@ -33,7 +37,7 @@ export default {
         </table>
       </div>
 
-      <div class="section">
+      <div class="section" v-if="httpRequest.user_id">
         <h2>Authenticated User</h2>
         <table>
           <tbody>
@@ -50,7 +54,7 @@ export default {
         <pre>{{ httpRequest.request_body }}</pre>
       </div>
 
-      <div class="section">
+      <div class="section" v-if="httpRequest.response_body">
         <h2>Response</h2>
         <pre class="width-100">{{ httpRequest.response_body }}</pre>
       </div>
