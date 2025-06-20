@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class DatabaseConfig(BaseSettings):
     user: str = Field(description='database user', alias='DB_USER')
-    password: str = Field(description='database password', alias='DB_PASS')
+    password: str = Field(description='database password', alias='DB_PASSWORD')
     host: str = Field(description='database host', alias='DB_HOST')
     port: int = Field(description='database port', alias='DB_PORT')
     name: str = Field(description='database name', alias='DB_NAME')
@@ -15,6 +15,7 @@ class DatabaseConfig(BaseSettings):
 
 def get_db_config() -> DatabaseConfig:
     return DatabaseConfig() 
+
 
 class APIConfig(BaseSettings):
     api_url: str = Field(description='api url', alias='API_URL')

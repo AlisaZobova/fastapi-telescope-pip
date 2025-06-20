@@ -29,7 +29,7 @@ app = FastAPI()
 
 app.add_middleware(TelescopeMiddleware)  # add telescope middleware
 
-app.include_router(router)
+app.include_router(router) # optionally add admin auth dependency here
 
 add_pagination(app)  # add pagination to your app
 
@@ -68,8 +68,24 @@ router.include_router(telescope_router)
 
 __all__ = ['router']
 ```
-4. Add creds (DB_USER,DB_PASS,DB_HOST,DB_PORT,DB_NAME) to POSTGRES db and API_URL (f.e. http://localhost:8000) to your .env file.
-5. Add migration with such methods to your migrations folder and run it (or you can use raw sql query for your db).
+4. Add creds (DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME) to POSTGRES db and API_URL (f.e. http://localhost:8000) to your .env file.
+5. To allow middleware use hooks to intercept database calls and log them, use the session maker from the package to create an asynchronous session:
+```python
+from fastapi_telescope.db import get_async_sessionmaker
+from typing import AsyncGenerator, Callable
+
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+)
+
+async def get_async_session(
+    sessionmaker: Callable[..., AsyncSession] = Depends(get_async_sessionmaker),
+) -> AsyncGenerator[AsyncSession, None]:
+    async with sessionmaker() as session:
+        yield session
+```
+6. Add migration with such methods to your migrations folder and run it (or you can use raw sql query for your db).
 ```python
 def upgrade():
     op.create_table('log_http_requests',
@@ -111,6 +127,6 @@ def downgrade() -> None:
     op.drop_table('log_db_queries')
     op.drop_table('log_http_requests')
 ```
-8. Run your FastAPI app and open docs page http://localhost:8000/docs.
-9. Open your browser and go to `http://localhost:8000/api/telescope/dashboard` (or use your own API_URL) to see the dashboard. It should look like this:<br><br>
+7. Run your FastAPI app and open docs page http://localhost:8000/docs.
+8. Open your browser and go to `http://localhost:8000/api/telescope/dashboard` (or use your own API_URL) to see the dashboard. It should look like this:<br><br>
 ![Dashboard](https://github.com/AlisaZobova/fastapi-telescope-pip/blob/master/dashboard.png?raw=true)
