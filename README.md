@@ -68,7 +68,7 @@ router.include_router(telescope_router)
 
 __all__ = ['router']
 ```
-4. Add creds (DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME) to POSTGRES db and API_URL (f.e. http://localhost:8000) to your .env file.
+4. Add creds (DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME) to POSTGRES db, SITE_URL (f.e. http://localhost:8000) and API_PREFIX (f.e. '/api') to your .env file.
 5. To allow middleware use hooks to intercept database calls and log them, use the session maker from the package to create an asynchronous session:
 ```python
 from fastapi_telescope.db import get_async_sessionmaker
@@ -128,5 +128,5 @@ def downgrade() -> None:
     op.drop_table('log_http_requests')
 ```
 7. Run your FastAPI app and open docs page http://localhost:8000/docs.
-8. Open your browser and go to `http://localhost:8000/api/telescope/dashboard` (or use your own API_URL) to see the dashboard. It should look like this:<br><br>
+8. Open your browser and go to `<SITE_URL><API_PREFIX>/telescope/dashboard` to see the dashboard. It should look like this:<br><br>
 ![Dashboard](https://github.com/AlisaZobova/fastapi-telescope-pip/blob/master/dashboard.png?raw=true)

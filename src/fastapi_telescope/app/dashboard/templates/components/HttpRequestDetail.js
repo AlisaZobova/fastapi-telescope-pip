@@ -51,12 +51,12 @@ export default {
 
       <div class="section" v-if="httpRequest.request_method !== 'GET'">
         <h2>Payload</h2>
-        <pre>{{ httpRequest.request_body }}</pre>
+        <pre class="json-container"><div class="json-inner"><span>{{ formatJson(httpRequest.request_body) }}</span></div></pre>
       </div>
-
+      
       <div class="section" v-if="httpRequest.response_body">
         <h2>Response</h2>
-        <pre class="width-100">{{ httpRequest.response_body }}</pre>
+        <pre class="json-container"><div class="json-inner width-100"><span>{{ formatJson(httpRequest.response_body) }}</span></div></pre>
       </div>
       
       <div class="section" v-if="httpRequest.exception_message">
@@ -123,5 +123,12 @@ export default {
       const userTimezone = dayjs.tz.guess();
       return dayjs.utc(datetime).tz(userTimezone).format("YYYY-MM-DD HH:mm:ss [Z]");
     },
+    formatJson(content) {
+      try {
+        return JSON.stringify(JSON.parse(content), null, 4);
+      } catch (e) {
+        return content;
+      }
+    }
   }
 };

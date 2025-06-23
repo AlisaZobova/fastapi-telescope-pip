@@ -18,7 +18,8 @@ def get_db_config() -> DatabaseConfig:
 
 
 class APIConfig(BaseSettings):
-    api_url: str = Field(description='api url', alias='API_URL')
+    site_url: str = Field(description='site url', alias='SITE_URL')
+    api_prefix: str = Field(description='api prefix', alias='API_PREFIX')
 
 def get_api_config() -> APIConfig:
     return APIConfig()  # type: ignore

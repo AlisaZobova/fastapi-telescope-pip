@@ -12,9 +12,9 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory= os.path.join(os.path.dirname(os.path.abspath(__file__)), "", "templates"))
 
-api_url = get_api_config().api_url
+api_configs = get_api_config()
 
 # any path processing
 @router.get("/{path:path}", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("dashboard.html", {"request": request, "api_url": api_url})
+    return templates.TemplateResponse("dashboard.html", {"request": request, "site_url": api_configs.site_url, "api_prefix": api_configs.api_prefix})

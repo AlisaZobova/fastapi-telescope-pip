@@ -1,4 +1,5 @@
 from fastapi_telescope.db import get_async_sessionmaker, get_async_engine
+from starlette.datastructures import UploadFile
 from .models import LogHttpRequest, LogDBQuery
 from datetime import datetime, date
 import time
@@ -143,22 +144,58 @@ class TelescopeMiddleware(BaseHTTPMiddleware):
             self._request_queries[request_id].append(query_info)
 
     async def _get_request_body(self, request: Request) -> str:
-        """Get the request body as a string"""
+        """Get the request body as a string, handling all data types gracefully"""
         body = await request.body()
-        return body.decode() if body else ""
+        if not body:
+            return ""
+
+        content_type = request.headers.get('content-type', '').lower()
+
+        if 'multipart/form-data' in content_type or 'application/x-www-form-urlencoded' in content_type:
+            form_data = dict(await request.form())
+            data = {}
+            
+            for key, value in form_data.items():                
+                if isinstance(value, UploadFile):                    
+                    data[key] = {
+                        "filename": value.filename,
+                        "content_type": value.content_type,
+                        "size": value.size
+                    }
+                else:
+                    data[key] = value
+
+            return json.dumps(data)
+
+        try:
+            return body.decode('utf-8')
+        except UnicodeDecodeError:
+            # Fall through to binary handling
+            return f"<Binary data: {len(body)} bytes, Content-Type: {content_type}>"
+
 
     async def _get_response_body(self, response: Optional[Response]) -> str:
-        """Get the response body as a string"""
         if not response:
             return ""
 
         body = b""
+        
         async for chunk in response.body_iterator:
             body += chunk
 
         # Reconstruct response with the body
         response.body = body
-        return body.decode() if body else ""
+
+        if not body:
+            return ""
+
+        content_type = response.headers.get('content-type', '').lower()
+
+        try:
+            return body.decode('utf-8')
+        except UnicodeDecodeError:
+            # Fall through to binary handling
+            return f"<Binary data: {len(body)} bytes, Content-Type: {content_type}>"
 
     async def _store_log_entry(
             self,

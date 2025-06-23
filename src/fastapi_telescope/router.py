@@ -4,6 +4,10 @@ from starlette import status
 from .app.log_http_request import router as requests_router
 from .app.log_db_queries import router as query_router
 from .app.dashboard import router as dashboard_router
+from .config import get_api_config
+
+
+api_config = get_api_config()
 
 
 router = APIRouter(
@@ -15,7 +19,7 @@ router = APIRouter(
             'message': 'Something went wrong',
         },
     },
-    prefix='/api/telescope',
+    prefix=api_config.api_prefix + '/telescope',
 )
 
 

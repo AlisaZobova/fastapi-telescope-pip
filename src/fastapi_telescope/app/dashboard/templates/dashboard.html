@@ -242,6 +242,22 @@
     .router-link-active {
       color: #3498db !important;
     }
+
+    .json-container {
+      padding: 20px 0;
+      text-align: center;
+      border-radius: 8px;
+      overflow-x: auto;          /* support for wide JSON lines */
+    }
+
+    .json-inner {
+      display: inline-block;
+      text-align: left;
+      padding: 0 20px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: monospace;
+    }
   </style>
 </head>
 <body>
@@ -269,32 +285,32 @@
     dayjs.extend(dayjs_plugin_timezone);
 
     // Configure Axios
-    axios.defaults.baseURL = '{{ api_url }}' ? '{{ api_url }}' + '/api/telescope' :  'http://localhost:8000/api/telescope';
+    axios.defaults.baseURL = '{{ site_url }}' + '{{ api_prefix }}' + '/telescope';
 
     // Setup Vue Router
     const routes = [
       {
-        path: '/api/telescope/dashboard',
+        path: '{{ api_prefix }}' + '/telescope/dashboard',
         name: 'dashboard',
         component: () => import('/components/DashboardView.js'),
       },
       {
-        path: '/api/telescope/dashboard/http-requests',
+        path: '{{ api_prefix }}' + '/telescope/dashboard/http-requests',
         name: 'http-requests',
         component: () => import('/components/HttpRequests.js'),
       },
       {
-        path: '/api/telescope/dashboard/db-queries',
+        path: '{{ api_prefix }}' + '/telescope/dashboard/db-queries',
         name: 'db-queries',
         component: () => import('/components/DBQueries.js'),
       },
       {
-        path: '/api/telescope/dashboard/http-requests/:id',
+        path: '{{ api_prefix }}' + '/telescope/dashboard/http-requests/:id',
         name: 'http-request-detail',
         component: () => import('/components/HttpRequestDetail.js'),
       },
       {
-        path: '/api/telescope/dashboard/db-queries/:id',
+        path: '{{ api_prefix }}' + '/telescope/dashboard/db-queries/:id',
         name: 'db-query-detail',
         component: () => import('/components/DBQueryDetail.js'),
       },
