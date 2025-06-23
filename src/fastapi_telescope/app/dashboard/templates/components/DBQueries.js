@@ -66,7 +66,7 @@ export default {
     async fetchQueries() {
       this.loading = true;
       try {
-        const response = await axios.get('/db-queries/', {
+        const response = await axios.get('/db-queries', {
           params: {
             page: this.page,
             size: this.size
